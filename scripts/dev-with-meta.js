@@ -39,6 +39,7 @@ async function main() {
 
   // Determine command — prefer local node_modules vite binary if present
   const projectRoot = dirname(fileURLToPath(import.meta.url))
+  const isWindows = process.platform === 'win32'
   const viteLocal = resolve(projectRoot, '..', 'node_modules', '.bin', 'vite')
 
   // If local vite binary doesn't exist, fail fast and ask to install deps
@@ -48,8 +49,8 @@ async function main() {
     process.exit(1)
   }
 
-  // Use local vite binary without shell when possible
-  const child = spawn(viteLocal, [], { env: childEnv, stdio: 'inherit', shell: false })
+  // Use local vite binary with shell on Windows for better compatibility
+  const child = spawn(viteLocal, [], { env: childEnv, stdio: 'inherit', shell: isWindows })
   child.on('close', (code) => process.exit(code ?? 0))
   child.on('error', (err) => {
     console.error('Failed to start vite:', err)

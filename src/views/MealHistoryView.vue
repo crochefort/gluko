@@ -35,7 +35,6 @@
               <input
                 id="searchInput"
                 v-model="searchQuery"
-                id="searchInput"
                 type="search"
                 class="form-control"
                 :placeholder="$t('views.mealHistory.filters.searchPlaceholder')"
