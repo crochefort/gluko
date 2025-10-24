@@ -14,12 +14,15 @@
       "cancel": "Annuler",
       "confirm": "Confirmer",
       "close": "Fermer",
-      "search": "Chercher"
+      "search": "Rechercher",
+      "hide": "Masquer",
+      "details": "Détails"
     },
     "labels": {
       "quantity": "Quantité",
       "factor": "Facteur",
       "subtotal": "Sous-total",
+      "fiber": "Fibres",
       "nutrient": "Aliment",
       "results": "Résultats",
       "noResults": "Aucun résultat",
@@ -30,7 +33,10 @@
       "milliliters": "ml"
     },
     "nutrients": {
-      "carbs": "Glucides"
+      "carbs": "Glucides",
+      "protein": "Protéines",
+      "fat": "Lipides",
+      "fiber": "Fibres"
     },
     "status": {
       "experimental": "Expérimental",
@@ -77,7 +83,15 @@
         "delete": "Supprimer le repas"
       },
       "nutrients": "aliments",
-      "tags": "étiquettes"
+      "tags": "étiquettes",
+      "foodItems": "Aliments",
+      "netCarbs": "Glucides nets",
+      "bolus": {
+        "immediate": "Bolus immédiat",
+        "extended": "Bolus prolongé",
+        "units": "unités",
+        "dualWave": "Double vague"
+      }
     },
     "nutrientList": {
       "item": {
@@ -124,19 +138,53 @@
       "title": "Chercher un aliment",
       "placeholder": "Entrer le nom de l'aliment",
       "source": "Source",
-      "noResults": "Aucun résultat",
+      "noResults": "Aucun résultat trouvé pour \"{query}\"",
       "results": "Résultats ({count})",
-      "selectItem": "Sélectionner {name}"
+      "resultsCount": "{count} résultats",
+      "selectItem": "Sélectionner {name}",
+      "lazyLoading": "Mode Performance",
+      "lazyLoadingEnabled": "Chargement paresseux actif - charge les données à la demande",
+      "lazyLoadingDisabled": "Mode legacy - toutes les données chargées en une fois",
+      "loadMore": "Charger Plus"
     },
     "mealCalculator": {
       "title": "Calculateur de glucides",
-      "totalCarbs": "Total des glucides",
+      "totalCarbs": "Total des glucides nets (glucides - fibres)",
       "nutrientCount": "Nombre d'aliments dans le repas",
       "actions": {
         "addNutrient": "Ajouter un aliment",
         "reset": "Réinitialiser",
         "saveToHistory": "Sauvegarder dans l'historique"
       }
+    },
+    "bolusCalculator": {
+      "title": "Calculateur de bolus d'insuline",
+      "immediateBolusTitle": "Bolus immédiat",
+      "extendedBolusTitle": "Bolus prolongé",
+      "units": "unités",
+      "giveNow": "Donner maintenant (avant le repas)",
+      "extendedOver": "Prolongé sur",
+      "dualWave": "Bolus double vague",
+      "splitOver": "réparti sur",
+      "recommendations": {
+        "title": "Recommandations de timing",
+        "giveNow": "Administrer {units} unités maintenant (avant le repas)",
+        "dualWave": "Bolus double-vague : {split} réparti sur {hours}h",
+        "extended": "Administrer {units} unités {timing}, prolongé sur {hours}h",
+        "immediately": "immédiatement",
+        "afterMeal": "{hours}h après le repas"
+      },
+      "macronutrients": "Macronutriments",
+      "netCarbs": "Glucides nets",
+      "protein": "Protéines",
+      "fat": "Lipides",
+      "calculations": "Calculs",
+      "icr": "ICR (1:X)",
+      "carbsBolus": "Bolus glucides",
+      "proteinFatBolus": "Bolus protéines/lipides",
+      "method": "Méthode",
+      "highProteinFatWarning": "Repas riche en protéines/lipides détecté. Considérez un bolus prolongé.",
+      "noCalculation": "Ajoutez des aliments pour voir le calcul de bolus"
     }
   },
   "locale": {
@@ -154,8 +202,11 @@
     "para1": "Cette application a pour objectif de faciliter le calcul des glucides.",
     "para2": "Le calculateur de glucides permet d'ajouter des aliments dans une liste, d'indiquer la quantité en gramme ainsi que le facteur glucidique. Le calculateur de glucides affichera le total des glucides de la liste d'aliments saisis.",
     "para3": "L'outil de recherche du facteur glucidique permet de rechercher un aliment et d'obtenir le facteur glucidique de cet aliment. Le facteur glucidique est le nombre de glucides par gramme d'aliment. Les données utilisées pour ce calcul provient du ",
-    "CNF": "Fichier canadien sur les éléments nutritifs (FCÉN)",
-    "url": "https://food-nutrition.canada.ca/cnf-fce/?lang=fre"
+    "CNF": "Fichier canadien sur les éléments nutritifs",
+    "url": "https://food-nutrition.canada.ca/cnf-fce/?lang=fra"
+  },
+  "food": {
+    "group": "Groupe d'aliments"
   },
   "errors": {
     "notFound": {

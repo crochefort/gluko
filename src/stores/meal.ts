@@ -13,6 +13,10 @@ export interface Nutrient {
   measureName?: string
   measureNameF?: string
   unit?: string
+  fiber?: number // Fiber content per 100g (nutrient code 291)
+  protein?: number // Protein content per 100g (nutrient code 203)
+  fat?: number // Fat content per 100g (nutrient code 204)
+  servingWeight?: number // Actual weight of the selected measure in grams
 }
 
 export const useMealStore = defineStore('mealStore', () => {
@@ -80,6 +84,32 @@ export const useMealStore = defineStore('mealStore', () => {
     return activeSessions.value.get(subjectStore.currentSubject.id) || null
   }
 
+  // Calculate fiber content for a nutrient
+  const calculateFiberContent = (nutrient: Nutrient): number => {
+    if (!nutrient.fiber || nutrient.fiber === null) {
+      return 0
+    }
+
+    // For custom measures (measureId = -1), use quantity directly as grams
+    if (nutrient.measureId === -1) {
+      return (nutrient.fiber / 100) * nutrient.quantity
+    }
+
+    // For predefined measures, use servingWeight * quantity
+    if (!nutrient.servingWeight || nutrient.servingWeight === null) {
+      return 0
+    }
+
+    return (nutrient.fiber / 100) * nutrient.servingWeight * nutrient.quantity
+  }
+
+  // Calculate net carbs for a nutrient (total carbs - fiber)
+  const calculateNetCarbs = (nutrient: Nutrient): number => {
+    const totalCarbs = nutrient.quantity * nutrient.factor
+    const fiberContent = calculateFiberContent(nutrient)
+    return Math.max(0, totalCarbs - fiberContent) // Ensure we don't get negative net carbs
+  }
+
   // Getters
   const currentNutrients = computed(() => {
     const session = getCurrentSession()
@@ -90,7 +120,7 @@ export const useMealStore = defineStore('mealStore', () => {
 
   const mealCarbs = computed(() =>
     currentNutrients.value.reduce(
-      (totalCarbs: number, nutrient: Nutrient) => totalCarbs + nutrient.quantity * nutrient.factor,
+      (totalNetCarbs: number, nutrient: Nutrient) => totalNetCarbs + calculateNetCarbs(nutrient),
       0
     )
   )
@@ -179,7 +209,11 @@ export const useMealStore = defineStore('mealStore', () => {
       id: uuid,
       name: 'Aliment',
       quantity: 0,
-      factor: 0
+      factor: 0,
+      fiber: 0,
+      protein: 0,
+      fat: 0,
+      servingWeight: 0
     })
   }
 
@@ -303,6 +337,10 @@ export const useMealStore = defineStore('mealStore', () => {
     nutrientEmpty,
     mealCarbs,
     nutrientCount,
+
+    // Helper functions
+    calculateFiberContent,
+    calculateNetCarbs,
 
     // Actions
     addNutrient,

@@ -192,6 +192,11 @@ function handleNutrientSelect(result: SearchResult) {
   currentNutrient.value.factor =
     result.item.fctGluc !== null ? result.item.fctGluc : result.item.nutrients['205']?.value / 100
 
+  // Store macronutrient values for bolus calculations
+  currentNutrient.value.fiber = result.item.nutrients['291']?.value || 0 // Fiber
+  currentNutrient.value.protein = result.item.nutrients['203']?.value || 0 // Protein
+  currentNutrient.value.fat = result.item.nutrients['204']?.value || 0 // Fat
+
   // Detect if it's a liquid food
   const isLiquid =
     result.item.foodDescriptionF.toLowerCase().includes('liquide') ||
@@ -206,25 +211,34 @@ function handleNutrientSelect(result: SearchResult) {
   const carbFactor =
     result.item.fctGluc !== null ? result.item.fctGluc : result.item.nutrients['205']?.value / 100
   const allMeasures = result.item.measures.map((measure) => {
-    const unit = measure.measureName.toLowerCase().includes('ml') ? 'ml' : 'g'
-    // Extract numeric value from measure name and estimate realistic quantities
+    // Use actual serving weight if available, otherwise fall back to estimation
     let qty = 0
-    const measureName = measure.measureName.toLowerCase()
+    let unit = 'g'
 
-    // Extract numbers from measure names
-    const match = measureName.match(/(\d+[\.,]?\d*)\s*(g|ml)/i)
-    if (match) {
-      qty = parseFloat(match[1].replace(',', '.'))
-    } else if (measureName.includes('medium')) {
-      qty = 150 // typical medium apple ~150g
-    } else if (measureName.includes('large')) {
-      qty = 200 // typical large apple ~200g
-    } else if (measureName.includes('small')) {
-      qty = 100 // typical small apple ~100g
-    } else if (measureName.includes('1 ')) {
-      qty = 150 // default to medium size
+    if (measure.servingWeight !== null && measure.servingWeight !== undefined) {
+      // Use the actual serving weight from conversion factors
+      qty = measure.servingWeight
+      unit = measure.unit || 'g'
     } else {
-      qty = 100 // fallback
+      // Fallback to estimation for measures without conversion factors
+      unit = measure.measureName.toLowerCase().includes('ml') ? 'ml' : 'g'
+      const measureName = measure.measureName.toLowerCase()
+
+      // Extract numbers from measure names
+      const match = measureName.match(/(\d+[.,]?\d*)\s*(g|ml)/i)
+      if (match) {
+        qty = parseFloat(match[1].replace(',', '.'))
+      } else if (measureName.includes('medium')) {
+        qty = 150 // typical medium apple ~150g
+      } else if (measureName.includes('large')) {
+        qty = 200 // typical large apple ~200g
+      } else if (measureName.includes('small')) {
+        qty = 100 // typical small apple ~100g
+      } else if (measureName.includes('1 ')) {
+        qty = 150 // default to medium size
+      } else {
+        qty = 100 // fallback
+      }
     }
 
     const carbs = +(qty * carbFactor).toFixed(1)
@@ -267,6 +281,7 @@ function handleNutrientSelect(result: SearchResult) {
     currentNutrient.value.measureName = defaultMeasure.measureName
     currentNutrient.value.measureNameF = defaultMeasure.measureNameF
     currentNutrient.value.unit = defaultMeasure.unit
+    currentNutrient.value.servingWeight = defaultMeasure.qty
     // Set quantity to 1 and factor to the measure's carb content
     currentNutrient.value.quantity = 1
     currentNutrient.value.factor = defaultMeasure.carbs
@@ -285,6 +300,7 @@ function handleMeasureChange() {
     currentNutrient.value.measureName = selectedMeasure.measureName
     currentNutrient.value.measureNameF = selectedMeasure.measureNameF
     currentNutrient.value.unit = selectedMeasure.unit
+    currentNutrient.value.servingWeight = selectedMeasure.qty
 
     if (selectedMeasure.measureId === -1) {
       // Custom option selected - set default values and let user input quantity

@@ -11,10 +11,10 @@ const props = defineProps<{
 // Destructure props with refs to maintain reactivity
 const { results, showSourceLinks, compact } = toRefs(props)
 
-const emit = defineEmits(['select'])
+defineEmits(['select'])
 
-const cnfLink = computed(() => (foodId: number, locale: string) => {
-  return `https://food-nutrition.canada.ca/cnf-fce/serving-portion?id=${foodId}&lang=${locale === 'fr' ? 'fre' : 'eng'}`
+const cnfLink = computed(() => (foodCode: number, locale: string) => {
+  return `https://food-nutrition.canada.ca/cnf-fce/serving-portion?id=${foodCode}&lang=${locale === 'fr' ? 'fre' : 'eng'}`
 })
 </script>
 

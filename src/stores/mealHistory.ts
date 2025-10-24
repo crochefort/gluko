@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { ref, computed, watch } from 'vue'
 import { useIndexedDB } from '@/composables/useIndexedDB'
 import { useSubjectStore } from './subject'
-import type { MealHistoryEntry } from '@/types/meal-history'
+import type { MealHistoryEntry, BolusCalculation } from '@/types/meal-history'
 import type { Nutrient } from '@/stores/meal'
 
 const ENTRIES_PER_PAGE = 10
@@ -137,6 +137,7 @@ export const useMealHistoryStore = defineStore('mealHistoryStore', () => {
       name?: string
       notes?: string
       tags?: string[]
+      bolusCalculation?: BolusCalculation
     } = {}
   ): Promise<MealHistoryEntry | null> {
     try {
@@ -150,6 +151,7 @@ export const useMealHistoryStore = defineStore('mealHistoryStore', () => {
         date: new Date(),
         nutrients: [...nutrients],
         totalCarbs,
+        bolusCalculation: options.bolusCalculation,
         name: options.name,
         notes: options.notes,
         tags: options.tags || [],

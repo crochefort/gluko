@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref, computed, watch, nextTick } from 'vue'
-import { useNutrientFileStore } from '@/stores/nutrientsFile'
+import { ref, watch, nextTick } from 'vue'
+import { useNutrientFileStore, type SearchResult } from '@/stores/nutrientsFile'
 import { useDebounceFn } from '@vueuse/core'
 import SearchResults from './SearchResults.vue'
 
@@ -20,20 +20,52 @@ const store = useNutrientFileStore()
 const searchInput = ref('')
 const search = ref('')
 const loading = ref(false)
+const searchResults = ref<SearchResult[]>([])
 
-const searchResults = computed(() => {
-  return store.searchNutrients(search.value)
-})
+// Initialize lazy loading on component mount
+store.initializeLazyLoading()
+
+// Perform search using lazy loading
+async function performSearch(query: string) {
+  if (!query || query.trim().length < 2) {
+    searchResults.value = []
+    return
+  }
+  
+  loading.value = true
+  try {
+    if (store.isLazyLoadingEnabled) {
+      // Use lazy loading search
+      const results = await store.searchFoodsLazy(query, 'en', 100)
+      // Convert to legacy format for compatibility
+      searchResults.value = results.map((item, index) => ({ 
+        item, 
+        refIndex: index,
+        score: 1
+      }))
+    } else {
+      // Fallback to legacy search
+      searchResults.value = store.searchNutrients(query)
+    }
+  } catch (error) {
+    console.error('Search failed:', error)
+    searchResults.value = []
+  } finally {
+    loading.value = false
+  }
+}
 
 // Debounced search for auto-search mode (300ms delay)
-const debouncedSearch = useDebounceFn(() => {
-  search.value = searchInput.value.trim()
+const debouncedSearch = useDebounceFn(async () => {
+  await performSearch(searchInput.value.trim())
 }, 300)
 
 // Watch for auto-search
 watch(searchInput, () => {
   if (props.autoSearch && searchInput.value.trim().length >= 2) {
     debouncedSearch()
+  } else if (props.autoSearch && searchInput.value.trim().length < 2) {
+    searchResults.value = []
   }
 })
 

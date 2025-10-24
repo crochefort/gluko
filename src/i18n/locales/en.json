@@ -14,12 +14,15 @@
       "cancel": "Cancel",
       "confirm": "Confirm",
       "close": "Close",
-      "search": "Search"
+      "search": "Search",
+      "hide": "Hide",
+      "details": "Details"
     },
     "labels": {
       "quantity": "Quantity",
       "factor": "Factor",
       "subtotal": "Subtotal",
+      "fiber": "Fiber",
       "nutrient": "Nutrient",
       "results": "Results",
       "noResults": "No results",
@@ -30,7 +33,10 @@
       "milliliters": "ml"
     },
     "nutrients": {
-      "carbs": "Carbs"
+      "carbs": "Carbs",
+      "protein": "Protein",
+      "fat": "Fat",
+      "fiber": "Fiber"
     },
     "status": {
       "experimental": "Experimental",
@@ -77,7 +83,15 @@
         "delete": "Delete Meal"
       },
       "nutrients": "nutrients",
-      "tags": "tags"
+      "tags": "tags",
+      "foodItems": "Food Items",
+      "netCarbs": "Net carbs",
+      "bolus": {
+        "immediate": "Immediate Bolus",
+        "extended": "Extended Bolus",
+        "units": "units",
+        "dualWave": "Dual-wave"
+      }
     },
     "nutrientList": {
       "item": {
@@ -124,19 +138,53 @@
       "title": "Search a nutrient",
       "placeholder": "Enter nutrient name",
       "source": "Source",
-      "noResults": "No results",
+      "noResults": "No results found for \"{query}\"",
       "results": "Results ({count})",
-      "selectItem": "Select {name}"
+      "resultsCount": "{count} results",
+      "selectItem": "Select {name}",
+      "lazyLoading": "Performance Mode",
+      "lazyLoadingEnabled": "Lazy loading active - loads data on demand",
+      "lazyLoadingDisabled": "Legacy mode - all data loaded at once",
+      "loadMore": "Load More"
     },
     "mealCalculator": {
       "title": "Carbs Counter",
-      "totalCarbs": "Total count of carbs",
+      "totalCarbs": "Total net carbs (carbs - fiber)",
       "nutrientCount": "Number of nutrients in the meal",
       "actions": {
         "addNutrient": "Add a nutrient",
         "reset": "Reset",
         "saveToHistory": "Save to history"
       }
+    },
+    "bolusCalculator": {
+      "title": "Insulin Bolus Calculator",
+      "immediateBolusTitle": "Immediate Bolus",
+      "extendedBolusTitle": "Extended Bolus",
+      "units": "units",
+      "giveNow": "Give now (before meal)",
+      "extendedOver": "Extended over",
+      "dualWave": "Dual-wave bolus",
+      "splitOver": "split over",
+      "recommendations": {
+        "title": "Timing Recommendations",
+        "giveNow": "Give {units} units now (before meal)",
+        "dualWave": "Dual-wave bolus: {split} split over {hours}h",
+        "extended": "Give {units} units {timing}, extended over {hours}h",
+        "immediately": "immediately",
+        "afterMeal": "{hours}h after meal"
+      },
+      "macronutrients": "Macronutrients",
+      "netCarbs": "Net carbs",
+      "protein": "Protein",
+      "fat": "Fat",
+      "calculations": "Calculations",
+      "icr": "ICR (1:X)",
+      "carbsBolus": "Carbs bolus",
+      "proteinFatBolus": "Protein/fat bolus",
+      "method": "Method",
+      "highProteinFatWarning": "High protein/fat meal detected. Consider extended bolus timing.",
+      "noCalculation": "Add nutrients to see bolus calculation"
     }
   },
   "locale": {
@@ -156,6 +204,9 @@
     "para3": "The search tool allows the user to search for a nutrient and see the amount of carbohydrates in it. The user can then add the nutrient to the list of nutrients in the carb counter tool. The data used to calculate the amount of carbohydrates in a nutrient is based on the ",
     "CNF": "Canadian Nutrient File",
     "url": "https://food-nutrition.canada.ca/cnf-fce/?lang=eng"
+  },
+  "food": {
+    "group": "Food Group"
   },
   "errors": {
     "notFound": {

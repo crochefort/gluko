@@ -36,6 +36,11 @@ const router = createRouter({
       component: MealHistoryView
     },
     {
+      path: '/performance',
+      name: 'performance-demo',
+      component: () => import('../views/PerformanceDemo.vue')
+    },
+    {
       path: '/:pathMatch(.*)*',
       name: 'not-found',
       component: () => import('../views/NotFoundView.vue')

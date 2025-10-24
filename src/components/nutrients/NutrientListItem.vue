@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import type { PropType } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useMealStore, type Nutrient } from '@/stores/meal'
@@ -14,6 +14,16 @@ const props = defineProps({
 const emit = defineEmits(['modifyCurrentNutrient'])
 
 const showDeleteConfirmation = ref(false)
+
+// Calculate net carbs for this nutrient
+const netCarbs = computed(() => {
+  return mealStore.calculateNetCarbs(props.nutrient)
+})
+
+// Calculate fiber content for this nutrient
+const fiberContent = computed(() => {
+  return mealStore.calculateFiberContent(props.nutrient)
+})
 
 const removeNutrient = () => {
   showDeleteConfirmation.value = true
@@ -69,16 +79,28 @@ const handleModifyKeydown = (event: KeyboardEvent) => {
           <div class="d-lg-none">
             <hr class="d-lg-none my-2 w-80" />
           </div>
-          <div class="col-md-12 col-lg-2 text-center mb-1 mb-md-0 mt-md-3">
+          <div class="col-md-6 col-lg-2 text-center mb-1 mb-md-0 mt-md-3">
+            <p id="fiber-label-{{props.nutrient.id}}" class="mb-1">
+              {{ $t('common.labels.fiber') }}:
+            </p>
+            <p class="mb-1 mb-md-3" aria-labelledby="fiber-label-{{props.nutrient.id}}">
+              <span v-if="fiberContent > 0">
+                {{ fiberContent.toFixed(2) }}
+                g
+              </span>
+              <span v-else class="text-muted"> - </span>
+            </p>
+          </div>
+          <div class="col-md-6 col-lg-2 text-center mb-1 mb-md-0 mt-md-3">
             <p id="subtotal-label-{{props.nutrient.id}}" class="mb-1">
-              {{ $t('common.labels.subtotal') }}:
+              {{ $t('common.labels.subtotal') }} (Net):
             </p>
             <p class="mb-1 mb-md-3" aria-labelledby="subtotal-label-{{props.nutrient.id}}">
-              {{ (props.nutrient.quantity * props.nutrient.factor).toFixed(2) }}
+              {{ netCarbs.toFixed(2) }}
               g
             </p>
           </div>
-          <div class="col-12 col-lg-3">
+          <div class="col-12 col-lg-2">
             <div class="row">
               <div class="col-lg-12 col-6 text-center mb-1">
                 <button

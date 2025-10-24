@@ -1,25 +1,58 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { useNutrientFileStore } from '@/stores/nutrientsFile'
+import { useNutrientFileStore, type SearchResult } from '@/stores/nutrientsFile'
 
 const store = useNutrientFileStore()
 
 const search = ref('')
 const searchInput = ref('')
+const loading = ref(false)
+const searchResults = ref<SearchResult[]>([])
 
-const searchResults = computed(() => {
-  return store.searchNutrients(search.value)
-})
+// Initialize lazy loading on component mount
+store.initializeLazyLoading()
 
-const cnfLink = computed(() => (foodId: number, locale: string) => {
-  return `https://food-nutrition.canada.ca/cnf-fce/serving-portion?id=${foodId}&lang=${
+// Perform search using lazy loading
+async function performSearch(query: string) {
+  if (!query || query.trim().length < 2) {
+    searchResults.value = []
+    return
+  }
+  
+  loading.value = true
+  try {
+    if (store.isLazyLoadingEnabled) {
+      // Use lazy loading search
+      const results = await store.searchFoodsLazy(query, 'en', 100)
+      // Convert to legacy format for compatibility
+      searchResults.value = results.map((item, index) => ({ 
+        item, 
+        refIndex: index,
+        score: 1
+      }))
+    } else {
+      // Fallback to legacy search
+      searchResults.value = store.searchNutrients(query)
+    }
+  } catch (error) {
+    console.error('Search failed:', error)
+    searchResults.value = []
+  } finally {
+    loading.value = false
+  }
+}
+
+const cnfLink = computed(() => (foodCode: number, locale: string) => {
+  return `https://food-nutrition.canada.ca/cnf-fce/serving-portion?id=${foodCode}&lang=${
     locale === 'fr' ? 'fre' : 'eng'
   }`
 })
 
 // Trigger search from button click or enter key
-const triggerSearch = () => {
-  search.value = searchInput.value.trim()
+const triggerSearch = async () => {
+  const query = searchInput.value.trim()
+  search.value = query
+  await performSearch(query)
 }
 
 // Handle enter key in input
@@ -58,7 +91,12 @@ const handleKeydown = (event: KeyboardEvent) => {
         <h2>
           {{ $t('components.search.results', { count: searchResults.length }) }}
         </h2>
-        <ul v-if="searchResults !== undefined && searchResults.length > 0" class="list-group">
+        <div v-if="loading" class="d-flex justify-content-center">
+          <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+        </div>
+        <ul v-else-if="searchResults !== undefined && searchResults.length > 0" class="list-group">
           <li class="list-group-item">
             <div class="row">
               <div class="col-8 display-6">{{ $t('common.labels.nutrient') }}</div>

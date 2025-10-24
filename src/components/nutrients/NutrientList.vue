@@ -1,21 +1,28 @@
 <script setup lang="ts">
-import { ref, type Ref } from 'vue'
+import { ref, computed, type Ref } from 'vue'
 import NutrientListItem from './NutrientListItem.vue'
 import NutrientModal from '../modals/NutrientModal.vue'
 import CalculatorSummary from '../calculator/CalculatorSummary.vue'
 import CalculatorControls from '../calculator/CalculatorControls.vue'
 import BaseSkeletonCard from '../base/BaseSkeletonCard.vue'
 import type { Nutrient } from '@/stores/meal'
+import { useMealStore } from '@/stores/meal'
 
 const props = defineProps<{
   nutrients: Nutrient[]
 }>()
 
 const emit = defineEmits(['add', 'reset'])
+const mealStore = useMealStore()
 
 const currentNutrient: Ref<Nutrient | null> = ref(null)
 const isModalOpen = ref(false)
 const isLoading = ref(false)
+
+// Calculate total net carbs for all nutrients
+const totalNetCarbs = computed(() => {
+  return props.nutrients.reduce((sum, nutrient) => sum + mealStore.calculateNetCarbs(nutrient), 0)
+})
 
 async function handleAdd() {
   isLoading.value = true
@@ -67,10 +74,7 @@ function handleModalClose() {
     <!-- Fixed controls at bottom -->
     <div class="nutrient-controls flex-shrink-0 mt-3">
       <div class="card border-2">
-        <CalculatorSummary
-          :total-carbs="nutrients.reduce((sum, n) => sum + n.quantity * n.factor, 0)"
-          :nutrient-count="nutrients.length"
-        />
+        <CalculatorSummary :total-carbs="totalNetCarbs" :nutrient-count="nutrients.length" />
         <CalculatorControls @add="handleAdd" @reset="emit('reset')" />
       </div>
     </div>
