@@ -184,7 +184,9 @@
       "proteinFatBolus": "Protein/fat bolus",
       "method": "Method",
       "highProteinFatWarning": "High protein/fat meal detected. Consider extended bolus timing.",
-      "noCalculation": "Add nutrients to see bolus calculation"
+      "noCalculation": "Add nutrients to see bolus calculation",
+      "icrLabel": "Insulin-to-carb ratio (g / unit)",
+      "useCustom": "Use custom ICR"
     }
   },
   "locale": {

@@ -16,12 +16,19 @@ const { calculateBolus, getTimingRecommendations } = useBolusCalculator()
 
 const defaultICR = ref(10) // Default ICR of 1:10
 const showAdvanced = ref(false)
+const useCustomICR = ref(false)
+const customICR = ref<number | null>(null)
 
 // Calculate bolus when props change
 const bolusCalculation = computed((): BolusCalculation | null => {
   if (!props.nutrients.length) return null
 
-  const icr = props.icr || defaultICR.value
+  const icr = (() => {
+    // Priority: UI customICR (when enabled) -> prop icr -> default
+    if (useCustomICR.value && customICR.value && customICR.value > 0) return customICR.value
+    if (props.icr && props.icr > 0) return props.icr
+    return defaultICR.value
+  })()
   const method = props.method || 'percentage'
 
   return calculateBolus(props.nutrients, icr, method)
@@ -74,6 +81,25 @@ const methodDisplayName = computed(() => {
       <!-- Main Bolus Information -->
       <div class="row mb-3">
         <div class="col-md-6">
+          <div class="mb-2">
+            <label class="form-label small me-2">{{ t('components.bolusCalculator.icrLabel') }}</label>
+            <div class="input-group input-group-sm w-50">
+              <input
+                type="number"
+                class="form-control"
+                min="0.1"
+                step="0.1"
+                v-model.number="customICR"
+                :disabled="!useCustomICR"
+                aria-label="Custom ICR (g/unit)"
+              />
+              <span class="input-group-text">g / unit</span>
+            </div>
+            <div class="form-check form-check-inline mt-1">
+              <input class="form-check-input" type="checkbox" v-model="useCustomICR" id="useCustomICR" />
+              <label class="form-check-label small" for="useCustomICR">{{ t('components.bolusCalculator.useCustom') }}</label>
+            </div>
+          </div>
           <h3 class="h6">{{ t('components.bolusCalculator.immediateBolusTitle') }}</h3>
           <div class="display-6 text-primary fw-bold">
             {{ bolusCalculation.immediateBolusUnits.toFixed(1) }}

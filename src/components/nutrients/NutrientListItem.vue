@@ -73,7 +73,17 @@ const handleModifyKeydown = (event: KeyboardEvent) => {
               {{ $t('common.labels.factor') }}:
             </p>
             <p class="mb-1 mb-md-3" aria-labelledby="factor-label-{{props.nutrient.id}}">
-              {{ props.nutrient.factor }}
+              <span v-if="props.nutrient.measureId === -1">
+                <!-- Custom measure: show explicit calculation -->
+                <span>
+                  {{ props.nutrient.quantity }} {{ props.nutrient.unit || $t('common.units.grams') }}
+                  × {{ Number(props.nutrient.factor).toFixed(2) }}
+                  = {{ Number(props.nutrient.quantity * props.nutrient.factor).toFixed(2) }} g
+                </span>
+              </span>
+              <span v-else>
+                {{ props.nutrient.factor }}
+              </span>
             </p>
           </div>
           <div class="d-lg-none">

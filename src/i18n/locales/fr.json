@@ -184,7 +184,9 @@
       "proteinFatBolus": "Bolus protéines/lipides",
       "method": "Méthode",
       "highProteinFatWarning": "Repas riche en protéines/lipides détecté. Considérez un bolus prolongé.",
-      "noCalculation": "Ajoutez des aliments pour voir le calcul de bolus"
+      "noCalculation": "Ajoutez des aliments pour voir le calcul de bolus",
+      "icrLabel": "Ratio insuline/glucides (g / unité)",
+      "useCustom": "Utiliser ICR personnalisé"
     }
   },
   "locale": {

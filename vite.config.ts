@@ -9,6 +9,11 @@ import { VitePWA } from 'vite-plugin-pwa'
 // https://vitejs.dev/config/
 export default defineConfig({
   base: '/gluko/',
+    server: {
+      fs: {
+        allow: ['..']
+      }
+    },
   define: {
     __APP_VERSION__: JSON.stringify(process.env.VERSION || 'dev'),
     __BUILD_DATE__: JSON.stringify(process.env.BUILD_DATE || new Date().toISOString()),
@@ -79,6 +84,7 @@ export default defineConfig({
         }
       }
     },
+    copyPublicDir: true,
     // Optimize assets
     assetsInlineLimit: 4096,
     // Enable compression

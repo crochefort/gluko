@@ -355,15 +355,21 @@ export const useNutrientFileStore = defineStore('nutrientsFile', () => {
     try {
       console.log('🚀 Initializing lazy-loaded nutrients store...')
 
+      // Use Vite base URL so assets resolve correctly in dev and prod
+  const baseUrl = ((import.meta as any).env.BASE_URL || '/') as string
+  const basePath = (import.meta as any).env.PROD
+        ? `${baseUrl.replace(/\/$/, '')}/assets/nutrient-chunks`
+        : `${baseUrl.replace(/\/$/, '')}/src/assets/nutrient-chunks`
+
       // Check if chunks exist by trying to load manifest
-      const manifestResponse = await fetch('/src/assets/nutrient-chunks/manifest.json')
+      const manifestResponse = await fetch(`${basePath}/manifest.json`)
       if (!manifestResponse.ok) {
         console.log('⚠️ Chunk files not found, staying with legacy loading')
         return false
       }
 
       // Load search index
-      const searchResponse = await fetch('/src/assets/nutrient-chunks/search-index.json')
+      const searchResponse = await fetch(`${basePath}/search-index.json`)
       if (!searchResponse.ok) {
         throw new Error(`Failed to load search index: ${searchResponse.statusText}`)
       }
@@ -397,7 +403,11 @@ export const useNutrientFileStore = defineStore('nutrientsFile', () => {
     }
 
     try {
-      const response = await fetch(`/src/assets/nutrient-chunks/group-${groupId}.json`)
+  const baseUrl = ((import.meta as any).env.BASE_URL || '/') as string
+  const basePath = (import.meta as any).env.PROD
+        ? `${baseUrl.replace(/\/$/, '')}/assets/nutrient-chunks`
+        : `${baseUrl.replace(/\/$/, '')}/src/assets/nutrient-chunks`
+      const response = await fetch(`${basePath}/group-${groupId}.json`)
 
       if (!response.ok) {
         throw new Error(`Failed to load group ${groupId}: ${response.statusText}`)

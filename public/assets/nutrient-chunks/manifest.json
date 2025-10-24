@@ -1,0 +1,169 @@
+{
+  "version": "1.0",
+  "created": "2025-10-24T18:22:05.343Z",
+  "totalFoods": 5690,
+  "totalGroups": 23,
+  "originalSize": "63.0MB",
+  "chunks": [
+    {
+      "file": "group-1.json",
+      "groupId": 1,
+      "groupName": "Dairy and Egg Products",
+      "count": 241,
+      "size": "3443.6KB"
+    },
+    {
+      "file": "group-2.json",
+      "groupId": 2,
+      "groupName": "Spices and Herbs",
+      "count": 63,
+      "size": "754.8KB"
+    },
+    {
+      "file": "group-3.json",
+      "groupId": 3,
+      "groupName": "Baby Foods",
+      "count": 94,
+      "size": "1367.5KB"
+    },
+    {
+      "file": "group-4.json",
+      "groupId": 4,
+      "groupName": "Fats and Oils",
+      "count": 144,
+      "size": "2138.3KB"
+    },
+    {
+      "file": "group-5.json",
+      "groupId": 5,
+      "groupName": "Poultry Products",
+      "count": 418,
+      "size": "6190.7KB"
+    },
+    {
+      "file": "group-6.json",
+      "groupId": 6,
+      "groupName": "Soups, Sauces and Gravies",
+      "count": 267,
+      "size": "3249.1KB"
+    },
+    {
+      "file": "group-7.json",
+      "groupId": 7,
+      "groupName": "Sausages and Luncheon Meats",
+      "count": 149,
+      "size": "2160.2KB"
+    },
+    {
+      "file": "group-8.json",
+      "groupId": 8,
+      "groupName": "Breakfast Cereals",
+      "count": 212,
+      "size": "2132.7KB"
+    },
+    {
+      "file": "group-9.json",
+      "groupId": 9,
+      "groupName": "Fruits and Fruit Juices",
+      "count": 328,
+      "size": "3684.7KB"
+    },
+    {
+      "file": "group-10.json",
+      "groupId": 10,
+      "groupName": "Pork Products",
+      "count": 209,
+      "size": "3009.9KB"
+    },
+    {
+      "file": "group-11.json",
+      "groupId": 11,
+      "groupName": "Vegetables and Vegetable Products",
+      "count": 785,
+      "size": "9036.2KB"
+    },
+    {
+      "file": "group-12.json",
+      "groupId": 12,
+      "groupName": "Nut and Seed Products",
+      "count": 139,
+      "size": "1796.1KB"
+    },
+    {
+      "file": "group-13.json",
+      "groupId": 13,
+      "groupName": "Beef Products",
+      "count": 170,
+      "size": "2586.7KB"
+    },
+    {
+      "file": "group-14.json",
+      "groupId": 14,
+      "groupName": "Beverages",
+      "count": 243,
+      "size": "3217.4KB"
+    },
+    {
+      "file": "group-15.json",
+      "groupId": 15,
+      "groupName": "Finfish and Shellfish Products",
+      "count": 325,
+      "size": "3824.6KB"
+    },
+    {
+      "file": "group-16.json",
+      "groupId": 16,
+      "groupName": "Legumes and Legume Products",
+      "count": 230,
+      "size": "2640.0KB"
+    },
+    {
+      "file": "group-17.json",
+      "groupId": 17,
+      "groupName": "Lamb, Veal, and Game Products",
+      "count": 363,
+      "size": "4105.5KB"
+    },
+    {
+      "file": "group-18.json",
+      "groupId": 18,
+      "groupName": "Baked Products",
+      "count": 441,
+      "size": "5565.6KB"
+    },
+    {
+      "file": "group-19.json",
+      "groupId": 19,
+      "groupName": "Sweets",
+      "count": 324,
+      "size": "3741.5KB"
+    },
+    {
+      "file": "group-20.json",
+      "groupId": 20,
+      "groupName": "Cereals, Grains and Pasta",
+      "count": 155,
+      "size": "1810.6KB"
+    },
+    {
+      "file": "group-21.json",
+      "groupId": 21,
+      "groupName": "Fast Foods",
+      "count": 174,
+      "size": "2036.2KB"
+    },
+    {
+      "file": "group-22.json",
+      "groupId": 22,
+      "groupName": "Mixed Dishes",
+      "count": 123,
+      "size": "1472.8KB"
+    },
+    {
+      "file": "group-25.json",
+      "groupId": 25,
+      "count": 93,
+      "size": "1114.5KB"
+    }
+  ]
+}
