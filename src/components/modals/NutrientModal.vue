@@ -80,8 +80,25 @@ const currentNutrient = ref<Nutrient>({
   id: crypto.randomUUID(),
   name: '',
   quantity: 0,
-  factor: 0
+  factor: 0,
+  measureId: undefined,
+  measureName: '',
+  measureNameF: '',
+  unit: 'g'
 })
+
+const availableMeasures = ref<
+  Array<{
+    measureId: number
+    measureName: string
+    measureNameF: string
+    unit: string
+    qty: number
+    carbs: number
+    showCarbs: boolean
+  }>
+>([])
+const selectedFood = ref<SearchResult | null>(null)
 
 // Initialize Bootstrap modal and event handlers
 onMounted(() => {
@@ -170,13 +187,119 @@ function handleInputEnter(event: KeyboardEvent) {
 }
 
 function handleNutrientSelect(result: SearchResult) {
-  currentNutrient.value.name = result.item[`FoodDescription${locale.value === 'fr' ? 'F' : ''}`]
+  selectedFood.value = result
+  currentNutrient.value.name = result.item[`foodDescription${locale.value === 'fr' ? 'F' : ''}`]
   currentNutrient.value.factor =
-    result.item.FctGluc !== null ? result.item.FctGluc : result.item['205'] / 100
+    result.item.fctGluc !== null ? result.item.fctGluc : result.item.nutrients['205']?.value / 100
+
+  // Detect if it's a liquid food
+  const isLiquid =
+    result.item.foodDescriptionF.toLowerCase().includes('liquide') ||
+    result.item.foodDescriptionF.toLowerCase().includes('lait') ||
+    result.item.foodDescriptionF.toLowerCase().includes('jus') ||
+    result.item.foodDescriptionF.toLowerCase().includes('boisson') ||
+    result.item.foodDescriptionF.toLowerCase().includes('sirop') ||
+    result.item.foodDescriptionF.toLowerCase().includes('sauce')
+
+  // Filter and set available measures based on food type
+  // Calculate carb amount for each measure
+  const carbFactor =
+    result.item.fctGluc !== null ? result.item.fctGluc : result.item.nutrients['205']?.value / 100
+  const allMeasures = result.item.measures.map((measure) => {
+    const unit = measure.measureName.toLowerCase().includes('ml') ? 'ml' : 'g'
+    // Extract numeric value from measure name and estimate realistic quantities
+    let qty = 0
+    const measureName = measure.measureName.toLowerCase()
+
+    // Extract numbers from measure names
+    const match = measureName.match(/(\d+[\.,]?\d*)\s*(g|ml)/i)
+    if (match) {
+      qty = parseFloat(match[1].replace(',', '.'))
+    } else if (measureName.includes('medium')) {
+      qty = 150 // typical medium apple ~150g
+    } else if (measureName.includes('large')) {
+      qty = 200 // typical large apple ~200g
+    } else if (measureName.includes('small')) {
+      qty = 100 // typical small apple ~100g
+    } else if (measureName.includes('1 ')) {
+      qty = 150 // default to medium size
+    } else {
+      qty = 100 // fallback
+    }
+
+    const carbs = +(qty * carbFactor).toFixed(1)
+
+    // Check if measure name already contains carb information
+    const measureText = locale.value === 'fr' ? measure.measureNameF : measure.measureName
+    const hasCarbs = /carb|glucid|CHO/i.test(measureText)
+
+    return {
+      measureId: measure.measureId,
+      measureName: measure.measureName,
+      measureNameF: measure.measureNameF,
+      unit: unit,
+      qty: qty,
+      carbs: carbs,
+      showCarbs: !hasCarbs
+    }
+  })
+
+  // Show ALL measures (no filtering by liquid/solid anymore)
+  availableMeasures.value = allMeasures
+
+  // Add custom option at the end with appropriate unit
+  const customUnit = isLiquid ? 'ml' : 'g'
+  const customQty = 100
+  availableMeasures.value.push({
+    measureId: -1, // Special ID for custom
+    measureName: 'Custom',
+    measureNameF: 'Personnalisé',
+    unit: customUnit,
+    qty: customQty,
+    carbs: +(customQty * carbFactor).toFixed(1),
+    showCarbs: true
+  })
+
+  // Set default measure (first available after filtering)
+  if (availableMeasures.value.length > 0) {
+    const defaultMeasure = availableMeasures.value[0]
+    currentNutrient.value.measureId = defaultMeasure.measureId
+    currentNutrient.value.measureName = defaultMeasure.measureName
+    currentNutrient.value.measureNameF = defaultMeasure.measureNameF
+    currentNutrient.value.unit = defaultMeasure.unit
+    // Set quantity to 1 and factor to the measure's carb content
+    currentNutrient.value.quantity = 1
+    currentNutrient.value.factor = defaultMeasure.carbs
+  }
 
   // Focus quantity field after selection
   const quantityInput = document.getElementById('nutrient-quantity') as HTMLInputElement | null
   quantityInput?.focus()
+}
+
+function handleMeasureChange() {
+  const selectedMeasure = availableMeasures.value.find(
+    (m) => m.measureId === currentNutrient.value.measureId
+  )
+  if (selectedMeasure) {
+    currentNutrient.value.measureName = selectedMeasure.measureName
+    currentNutrient.value.measureNameF = selectedMeasure.measureNameF
+    currentNutrient.value.unit = selectedMeasure.unit
+
+    if (selectedMeasure.measureId === -1) {
+      // Custom option selected - set default values and let user input quantity
+      currentNutrient.value.quantity = 100
+      currentNutrient.value.factor = selectedFood.value
+        ? selectedFood.value.item.fctGluc !== null
+          ? selectedFood.value.item.fctGluc
+          : selectedFood.value.item.nutrients['205']?.value / 100
+        : 0
+    } else {
+      // Predefined measure selected - set quantity to 1 and factor to measure's carb content
+      currentNutrient.value.quantity = 1
+      currentNutrient.value.factor = selectedMeasure.carbs
+    }
+  }
 }
 </script>
 
@@ -210,7 +333,7 @@ function handleNutrientSelect(result: SearchResult) {
                   $t('components.nutrientModal.search.label')
                 }}</label>
                 <NutrientSearch
-                  :auto-search="false"
+                  :auto-search="true"
                   :clear-after-select="true"
                   :show-source-links="false"
                   :compact-results="true"
@@ -238,7 +361,32 @@ function handleNutrientSelect(result: SearchResult) {
                     $t('components.nutrientModal.fields.name')
                   }}</label>
                 </div>
-                <div class="col col-lg-3 form-floating">
+                <div v-if="availableMeasures.length > 0" class="col-md-12 col-lg-6 form-floating">
+                  <select
+                    id="nutrient-measure"
+                    v-model="currentNutrient.measureId"
+                    class="form-select"
+                    :aria-label="$t('components.nutrientModal.fields.measure')"
+                    @change="handleMeasureChange"
+                  >
+                    <option
+                      v-for="measure in availableMeasures"
+                      :key="measure.measureId"
+                      :value="measure.measureId"
+                    >
+                      {{
+                        (locale === 'fr' ? measure.measureNameF : measure.measureName) +
+                        (measure.showCarbs
+                          ? ' (' + $t('common.nutrients.carbs') + ': ' + measure.carbs + 'g)'
+                          : '')
+                      }}
+                    </option>
+                  </select>
+                  <label class="ms-2" for="nutrient-measure">{{
+                    $t('components.nutrientModal.fields.measure')
+                  }}</label>
+                </div>
+                <div v-if="currentNutrient.measureId === -1" class="col col-lg-3 form-floating">
                   <input
                     id="nutrient-quantity"
                     v-model.number="currentNutrient.quantity"
@@ -252,7 +400,9 @@ function handleNutrientSelect(result: SearchResult) {
                     @keydown.enter.prevent="handleInputEnter"
                   />
                   <label class="ms-2" for="nutrient-quantity">
-                    {{ $t('components.nutrientModal.fields.quantity') }}
+                    {{ $t('components.nutrientModal.fields.quantity') }} ({{
+                      currentNutrient.unit || 'g'
+                    }})
                   </label>
                 </div>
                 <div class="col col-lg-3 form-floating">

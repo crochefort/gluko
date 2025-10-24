@@ -26,7 +26,11 @@
       "loading": "Chargement..."
     },
     "units": {
-      "grams": "g"
+      "grams": "g",
+      "milliliters": "ml"
+    },
+    "nutrients": {
+      "carbs": "Glucides"
     },
     "status": {
       "experimental": "Expérimental",
@@ -92,7 +96,8 @@
       "fields": {
         "name": "Nom",
         "quantity": "Quantité",
-        "factor": "Facteur"
+        "factor": "Facteur",
+        "measure": "Unité/Mesure"
       },
       "actions": {
         "save": "Sauvegarder",
